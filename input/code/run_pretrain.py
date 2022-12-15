@@ -5,6 +5,8 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader, RandomSampler
 
+import wandb
+
 from datasets import PretrainDataset
 from models import S3RecModel
 from trainers import PretrainTrainer
@@ -107,6 +109,8 @@ def main():
     model = S3RecModel(args=args)
     trainer = PretrainTrainer(model, None, None, None, None, args)
 
+    wandb.init(project = 'Movie_Rec_PreTrain', entity = 'recsys_lvl2', config = args, name = args.model_name + '-' + args.data_name + '-' + '')
+    
     early_stopping = EarlyStopping(args.checkpoint_path, patience=10, verbose=True)
 
     for epoch in range(args.pre_epochs):
