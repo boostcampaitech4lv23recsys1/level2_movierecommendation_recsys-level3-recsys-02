@@ -5,6 +5,8 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 
+import wandb
+
 from datasets import SASRecDataset
 from models import S3RecModel
 from trainers import FinetuneTrainer
@@ -49,9 +51,9 @@ def main():
     # train args
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate of adam")
     parser.add_argument(
-        "--batch_size", type=int, default=1024, help="number of batch_size"
+        "--batch_size", type=int, default=256, help="number of batch_size"
     )
-    parser.add_argument("--epochs", type=int, default=1, help="number of epochs")
+    parser.add_argument("--epochs", type=int, default=200, help="number of epochs")
     parser.add_argument("--no_cuda", action="store_true")
     parser.add_argument("--log_freq", type=int, default=1, help="per epoch print res")
     parser.add_argument("--seed", default=42, type=int)
@@ -75,19 +77,17 @@ def main():
     check_path(args.output_dir)
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
-    args.cuda_condition = torch.cuda.is_available() and not args.no_cuda # cpu or gpu
-    
-    args.data_file = args.data_dir + "train_ratings.csv" 
+    args.cuda_condition = torch.cuda.is_available() and not args.no_cuda
+
+    args.data_file = args.data_dir + "train_ratings.csv"
     item2attribute_file = args.data_dir + args.data_name + "_item2attributes.json"
 
     user_seq, max_item, valid_rating_matrix, test_rating_matrix, _ = get_user_seqs(
         args.data_file
-    ) # user_seq : 유저별 아이템 리스트
-      # max_item : item 갯수 + 2 
-      # valid_rating_matrix : train_ratings.csv를 압축 행렬로 변환한 matrix # 마지막 2개를 제외 
-      # test_rating_matrix :  train_ratings.csv를 압축 행렬로 변환한 matrix # 마지막 1개를 제외 
+    )
+
     item2attribute, attribute_size = get_item2attribute_json(item2attribute_file)
-    
+
     args.item_size = max_item + 2
     args.mask_id = max_item + 1
     args.attribute_size = attribute_size + 1
@@ -99,27 +99,27 @@ def main():
 
     args.item2attribute = item2attribute
     # set item score in train set to `0` in validation
-    args.train_matrix = valid_rating_matrix # train과 valid는 같은 data 다만 dataset에서 몇 개를 제외하고 가져오냐의 차이
+    args.train_matrix = valid_rating_matrix
 
     # save model
     checkpoint = args_str + ".pt"
     args.checkpoint_path = os.path.join(args.output_dir, checkpoint)
 
     train_dataset = SASRecDataset(args, user_seq, data_type="train")
-    train_sampler = RandomSampler(train_dataset) # dataset에서 dataloader가 random으로 뽑게 만듬
+    train_sampler = RandomSampler(train_dataset)
     train_dataloader = DataLoader(
-        train_dataset, sampler=train_sampler, batch_size=args.batch_size # https://subinium.github.io/pytorch-dataloader/ 
+        train_dataset, sampler=train_sampler, batch_size=args.batch_size
     )
 
     eval_dataset = SASRecDataset(args, user_seq, data_type="valid")
-    eval_sampler = SequentialSampler(eval_dataset) # 동일한 순서로 뽑기 
+    eval_sampler = SequentialSampler(eval_dataset)
     eval_dataloader = DataLoader(
         eval_dataset, sampler=eval_sampler, batch_size=args.batch_size
     )
-    # 동일한 순서나 random이나 상관 없지만 submission 파일 제작을 할때 재정렬을 안해도 되기 때문에 동일한 순서를 사용하는것 같음.
+
     test_dataset = SASRecDataset(args, user_seq, data_type="test")
-    test_sampler = SequentialSampler(test_dataset) # 동일한 순서로 뽑기 
-    test_dataloader = DataLoader( 
+    test_sampler = SequentialSampler(test_dataset)
+    test_dataloader = DataLoader(
         test_dataset, sampler=test_sampler, batch_size=args.batch_size
     )
 
@@ -129,7 +129,8 @@ def main():
         model, train_dataloader, eval_dataloader, test_dataloader, None, args
     )
 
-    if args.using_pretrain: # 임베딩 학습 한것 가져오기
+    print(args.using_pretrain)
+    if args.using_pretrain:
         pretrained_path = os.path.join(args.output_dir, "Pretrain.pt")
         try:
             trainer.load(pretrained_path)
@@ -140,6 +141,8 @@ def main():
     else:
         print("Not using pretrained model. The Model is same as SASRec")
 
+    wandb.init(project = 'Movie_Rec_Train', entity = 'recsys_lvl2', config = args, name = args.model_name + '-' + args.data_name + '-' + '')
+    
     early_stopping = EarlyStopping(args.checkpoint_path, patience=10, verbose=True)
     for epoch in range(args.epochs):
         trainer.train(epoch)

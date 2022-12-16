@@ -101,24 +101,15 @@ def generate_rating_matrix_valid(user_seq, num_users, num_items):
     col = []
     data = []
     for user_id, item_list in enumerate(user_seq):
-        for item in item_list[:-2]:  # 마지막 2개를 제외
+        for item in item_list[:-2]:  #
             row.append(user_id)
             col.append(item)
             data.append(1)
-            
-    # 효율적인 데이터 처리를 위해 csr_matrix 형태로 변환
-        '''
-        1 2
-        0 4
-        형태를
-        indptr(row) : [0, 1], indices(col) : [0, 1, 1], data(data) : [1, 2 ,4] 형태로 변환한것
-        '''
-    # https://rfriend.tistory.com/551
-    
+
     row = np.array(row)
     col = np.array(col)
     data = np.array(data)
-    rating_matrix = csr_matrix((data, (row, col)), shape=(num_users, num_items)) # https://rfriend.tistory.com/551
+    rating_matrix = csr_matrix((data, (row, col)), shape=(num_users, num_items))
 
     return rating_matrix
 
@@ -129,24 +120,15 @@ def generate_rating_matrix_test(user_seq, num_users, num_items):
     col = []
     data = []
     for user_id, item_list in enumerate(user_seq):
-        for item in item_list[:-1]:  # 마지막 1개를 제외
+        for item in item_list[:-1]:  #
             row.append(user_id)
             col.append(item)
             data.append(1)
-            
-    # 효율적인 데이터 처리를 위해 csr_matrix 형태로 변환
-        '''
-        1 2
-        0 4
-        형태를
-        indptr(row) : [0, 1], indices(col) : [0, 1, 1], data(data) : [1, 2 ,4] 형태로 변환한것
-        '''
-    # https://rfriend.tistory.com/551
-    
+
     row = np.array(row)
     col = np.array(col)
     data = np.array(data)
-    rating_matrix = csr_matrix((data, (row, col)), shape=(num_users, num_items)) # https://rfriend.tistory.com/551
+    rating_matrix = csr_matrix((data, (row, col)), shape=(num_users, num_items))
 
     return rating_matrix
 
@@ -161,20 +143,11 @@ def generate_rating_matrix_submission(user_seq, num_users, num_items):
             row.append(user_id)
             col.append(item)
             data.append(1)
-            
-    # 효율적인 데이터 처리를 위해 csr_matrix 형태로 변환
-        '''
-        1 2
-        0 4
-        형태를
-        indptr(row) : [0, 1], indices(col) : [0, 1, 1], data(data) : [1, 2 ,4] 형태로 변환한것
-        '''
-    # https://rfriend.tistory.com/551
-    
+
     row = np.array(row)
     col = np.array(col)
     data = np.array(data)
-    rating_matrix = csr_matrix((data, (row, col)), shape=(num_users, num_items)) 
+    rating_matrix = csr_matrix((data, (row, col)), shape=(num_users, num_items))
 
     return rating_matrix
 
@@ -197,31 +170,24 @@ def generate_submission_file(data_file, preds):
 
 def get_user_seqs(data_file):
     rating_df = pd.read_csv(data_file)
-    item2label = {j:i+1 for i,j in enumerate(sorted(df['item'].unique()))}
-    rating_df['item'] = rating_df['item'].map(item2label)
-    lines = rating_df.groupby("user")["item"].apply(list) # 아래와 같이 변환
-    '''
-    user       item
-    11        [4643, 170, 531, 616, 2140, 2722, 2313, 2688, ...
-    14        [8961, 1396, 471, 2105, 1042, 1947, 1269, 2394...
-    '''
+    lines = rating_df.groupby("user")["item"].apply(list)
     user_seq = []
     item_set = set()
     for line in lines:
+
         items = line
-        user_seq.append(items) # 유저별 아이템 리스트 구하기
-        item_set = item_set | set(items) # 합집합을 이용해 전체 item set을 구함
+        user_seq.append(items)
+        item_set = item_set | set(items)
     max_item = max(item_set)
 
     num_users = len(lines)
     num_items = max_item + 2
 
-    valid_rating_matrix = generate_rating_matrix_valid(user_seq, num_users, num_items) # csr_matrix(압축 행렬)로 변환하는 함수
+    valid_rating_matrix = generate_rating_matrix_valid(user_seq, num_users, num_items)
     test_rating_matrix = generate_rating_matrix_test(user_seq, num_users, num_items)
     submission_rating_matrix = generate_rating_matrix_submission(
         user_seq, num_users, num_items
-    ) 
-    # matrix : (num_users*num_items)
+    )
     return (
         user_seq,
         max_item,
