@@ -5,8 +5,6 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader, RandomSampler
 
-import wandb
-
 from datasets import PretrainDataset
 from models import S3RecModel
 from trainers import PretrainTrainer
@@ -52,18 +50,18 @@ def main():
     # train args
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate of adam")
     parser.add_argument(
-        "--batch_size", type=int, default=256, help="number of batch_size"
+        "--batch_size", type=int, default=1024, help="number of batch_size"
     )
-    parser.add_argument("--epochs", type=int, default=200, help="number of epochs")
+    parser.add_argument("--epochs", type=int, default=1, help="number of epochs")
     parser.add_argument("--no_cuda", action="store_true")
     parser.add_argument("--log_freq", type=int, default=1, help="per epoch print res")
     parser.add_argument("--seed", default=42, type=int)
 
     # pre train args
     parser.add_argument(
-        "--pre_epochs", type=int, default=300, help="number of pre_train epochs"
+        "--pre_epochs", type=int, default=1, help="number of pre_train epochs"
     )
-    parser.add_argument("--pre_batch_size", type=int, default=512)
+    parser.add_argument("--pre_batch_size", type=int, default=1024*4)
 
     parser.add_argument("--mask_p", type=float, default=0.2, help="mask probability")
     parser.add_argument("--aap_weight", type=float, default=0.2, help="aap loss weight")
@@ -109,8 +107,6 @@ def main():
     model = S3RecModel(args=args)
     trainer = PretrainTrainer(model, None, None, None, None, args)
 
-    wandb.init(project = 'Movie_Rec_PreTrain', entity = 'recsys_lvl2', config = args, name = args.model_name + '-' + args.data_name + '-' + '')
-    
     early_stopping = EarlyStopping(args.checkpoint_path, patience=10, verbose=True)
 
     for epoch in range(args.pre_epochs):

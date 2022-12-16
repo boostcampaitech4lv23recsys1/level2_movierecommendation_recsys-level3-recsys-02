@@ -139,7 +139,7 @@ class SASRecDataset(Dataset):
     def __getitem__(self, index):
 
         user_id = index
-        items = self.user_seq[index]
+        items = self.user_seq[index] # [영화 본 목록들]
 
         assert self.data_type in {"train", "valid", "test", "submission"}
 
@@ -148,19 +148,21 @@ class SASRecDataset(Dataset):
         # target [1, 2, 3, 4]
 
         # valid [0, 1, 2, 3, 4]
+        # target_pos [1, 2, 3, 4, 5]
         # answer [5]
 
         # test [0, 1, 2, 3, 4, 5]
         # answer [6]
 
         # submission [0, 1, 2, 3, 4, 5, 6]
+        # target_pos [1, 2, 3, 4, 5, 6]
         # answer None
 
         if self.data_type == "train":
-            input_ids = items[:-3]
-            target_pos = items[1:-2]
+            input_ids = items[:-3] 
+            target_pos = items[1:-2] # label
             answer = [0]  # no use
-
+        # label과 data가 한 칸씩 다른것은 미래에 무엇을 볼지 맞춰야 하기 때문
         elif self.data_type == "valid":
             input_ids = items[:-2]
             target_pos = items[1:-1]
@@ -170,18 +172,19 @@ class SASRecDataset(Dataset):
             input_ids = items[:-1]
             target_pos = items[1:]
             answer = [items[-1]]
+            
         else:
             input_ids = items[:]
             target_pos = items[:]  # will not be used
             answer = []
 
-        target_neg = []
+        target_neg = [] # 오답
         seq_set = set(items)
         for _ in input_ids:
-            target_neg.append(neg_sample(seq_set, self.args.item_size))
+            target_neg.append(neg_sample(seq_set, self.args.item_size)) # 안본 영화들 추가
 
         pad_len = self.max_len - len(input_ids)
-        input_ids = [0] * pad_len + input_ids
+        input_ids = [0] * pad_len + input_ids # sequence 길이가 max_len 보다 짧은 sequence 0으로 패딩
         target_pos = [0] * pad_len + target_pos
         target_neg = [0] * pad_len + target_neg
 

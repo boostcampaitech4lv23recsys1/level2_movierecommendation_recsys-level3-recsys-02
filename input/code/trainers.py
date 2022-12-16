@@ -6,7 +6,6 @@ from torch.optim import Adam
 
 from utils import ndcg_k, recall_at_k
 
-import wandb
 
 class Trainer:
     def __init__(
@@ -199,9 +198,6 @@ class PretrainTrainer(Trainer):
             "map_loss_avg": map_loss_avg / num,
             "sp_loss_avg": sp_loss_avg / num,
         }
-        
-        wandb.log(losses)
-        
         print(desc)
         print(str(losses))
         return losses
@@ -252,8 +248,8 @@ class FinetuneTrainer(Trainer):
                 loss.backward()
                 self.optim.step()
 
-                rec_avg_loss += loss.item()
-                rec_cur_loss = loss.item()
+                rec_avg_loss += loss.item() # epoch의 loss
+                rec_cur_loss = loss.item() # 마지막 batch에서의 loss
 
             post_fix = {
                 "epoch": epoch,
@@ -261,8 +257,6 @@ class FinetuneTrainer(Trainer):
                 "rec_cur_loss": "{:.4f}".format(rec_cur_loss),
             }
 
-            wandb.log(post_fix)
-            
             if (epoch + 1) % self.args.log_freq == 0:
                 print(str(post_fix))
 
@@ -274,20 +268,20 @@ class FinetuneTrainer(Trainer):
             for i, batch in rec_data_iter:
 
                 batch = tuple(t.to(self.device) for t in batch)
-                user_ids, input_ids, _, target_neg, answers = batch
+                user_ids, input_ids, _, _, answers = batch
                 recommend_output = self.model.finetune(input_ids)
 
-                recommend_output = recommend_output[:, -1, :]
+                recommend_output = recommend_output[:, -1, :] # batch, sequence, hiden_size 에서 마지막 sequence만 가져오기
 
-                rating_pred = self.predict_full(recommend_output)
+                rating_pred = self.predict_full(recommend_output) # hiden_size와 비슷한 정도를 숫자로 뱉어주는 함수
 
                 rating_pred = rating_pred.cpu().data.numpy().copy()
                 batch_user_index = user_ids.cpu().numpy()
-                rating_pred[self.args.train_matrix[batch_user_index].toarray() > 0] = 0
+                rating_pred[self.args.train_matrix[batch_user_index].toarray() > 0] = 0 # 이미 본 영화 제거
 
-                ind = np.argpartition(rating_pred, -10)[:, -10:]
+                ind = np.argpartition(rating_pred, -10)[:, -10:] # 가장 큰 값 10개 가져오기
 
-                arr_ind = rating_pred[np.arange(len(rating_pred))[:, None], ind]
+                arr_ind = rating_pred[np.arange(len(rating_pred))[:, None], ind] # [1,2,3,4] -> [[1], [2], [3], [4]]
 
                 arr_ind_argsort = np.argsort(arr_ind)[np.arange(len(rating_pred)), ::-1]
 
