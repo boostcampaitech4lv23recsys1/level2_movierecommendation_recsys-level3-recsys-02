@@ -1,2 +1,3 @@
 *.ipynb
 *cache*
+.DS_Store
