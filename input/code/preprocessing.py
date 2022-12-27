@@ -18,7 +18,7 @@ def main():
     
         
     # 제외하고 싶은 feature를 선택해서 item2attributes.json 파일 생성
-    def select_features(feature=None) : # default = all features
+    def preprocessing_mbk(feature=None) : # default = all features
         years = pd.read_csv('~/input/data/train/years.tsv', sep = '\t')
         directors = pd.read_csv('~/input/data/train/directors.tsv', sep = '\t')
         genres = pd.read_csv('~/input/data/train/genres.tsv', sep = '\t')
@@ -57,7 +57,7 @@ def main():
     elif way == 2 : 
         feature = input("select features you want to exclude").split()
         print("preprocessing in selective way")
-        select_features(feature)
+        preprocessing_mbk(feature)
 
 
 if __name__ == "__main__":
