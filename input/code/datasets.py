@@ -5,7 +5,6 @@ from torch.utils.data import Dataset
 
 from utils import neg_sample
 
-
 class PretrainDataset(Dataset):
     def __init__(self, args, user_seq, long_sequence): # PretrainDatset(args, user_seq, long_sequence)
         self.args = args
