@@ -5,23 +5,22 @@ from torch.utils.data import Dataset
 
 from utils import neg_sample
 
-
 class PretrainDataset(Dataset):
-    def __init__(self, args, user_seq, long_sequence):
+    def __init__(self, args, user_seq, long_sequence): # PretrainDatset(args, user_seq, long_sequence)
         self.args = args
         self.user_seq = user_seq
         self.long_sequence = long_sequence
-        self.max_len = args.max_seq_length
-        self.part_sequence = []
+        self.max_len = args.max_seq_length # default = 50
+        self.part_sequence = [] # item "segment"
         self.split_sequence()
 
-    def split_sequence(self):
+    def split_sequence(self): # user 별로 max sequence로 자르고 sub sequence로 나눠서 part_sequence에 append
         for seq in self.user_seq:
-            input_ids = seq[-(self.max_len + 2) : -2]  # keeping same as train set
-            for i in range(len(input_ids)):
+            input_ids = seq[-(self.max_len + 2) : -2]  # keeping same as train set / # 왜 이렇게 split? -> validation?
+            for i in range(len(input_ids)): # for i in range(50)
                 self.part_sequence.append(input_ids[: i + 1])
 
-    def __len__(self):
+    def __len__(self): # sub sequence(segment)개수 return
         return len(self.part_sequence)
 
     def __getitem__(self, index):
@@ -34,9 +33,9 @@ class PretrainDataset(Dataset):
         item_set = set(sequence)
         for item in sequence[:-1]:
             prob = random.random()
-            if prob < self.args.mask_p:
-                masked_item_sequence.append(self.args.mask_id)
-                neg_items.append(neg_sample(item_set, self.args.item_size))
+            if prob < self.args.mask_p: # self.args.mask_p = 0.2(default)
+                masked_item_sequence.append(self.args.mask_id) # mask_id = max_item(전체 itemset에서 가장 숫자가 큰 item)+1 -> 없는 item
+                neg_items.append(neg_sample(item_set, self.args.item_size)) # item_size = max_item + 2
             else:
                 masked_item_sequence.append(item)
                 neg_items.append(item)

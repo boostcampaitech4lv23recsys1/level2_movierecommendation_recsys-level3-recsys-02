@@ -29,8 +29,8 @@ def check_path(path):
 
 def neg_sample(item_set, item_size):
     item = random.randint(1, item_size - 1)
-    while item in item_set:
-        item = random.randint(1, item_size - 1)
+    while item in item_set: # item_set(argument)에서 없는 item에 대해서만 sampling
+        item = random.randint(1, item_size - 1) 
     return item
 
 
@@ -203,22 +203,22 @@ def get_user_seqs_long(data_file):
     user_seq = []
     long_sequence = []
     item_set = set()
-    for line in lines:
+    for line in lines: # user groupby 결과 iteration
         items = line
-        long_sequence.extend(items)
-        user_seq.append(items)
-        item_set = item_set | set(items)
-    max_item = max(item_set)
+        long_sequence.extend(items) # user groupby item long_sequence에 연결(extend) / shape : 1x
+        user_seq.append(items) # user groupby item user_seq에 추가(append) / row : user, col : items
+        item_set = item_set | set(items) # total unique item set union
+    max_item = max(item_set) # 가장 숫자가 큰 item
 
     return user_seq, max_item, long_sequence
 
 
-def get_item2attribute_json(data_file):
+def get_item2attribute_json(data_file): # item2attribute.json 파일이 무엇인지?
     item2attribute = json.loads(open(data_file).readline())
     attribute_set = set()
     for item, attributes in item2attribute.items():
-        attribute_set = attribute_set | set(attributes)
-    attribute_size = max(attribute_set)
+        attribute_set = attribute_set | set(attributes) # Total attribute set union
+    attribute_size = max(attribute_set) # max attribute value
     return item2attribute, attribute_size
 
 

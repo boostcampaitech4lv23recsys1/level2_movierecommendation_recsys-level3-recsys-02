@@ -5,6 +5,8 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 
+import wandb
+
 from datasets import SASRecDataset
 from models import S3RecModel
 from trainers import FinetuneTrainer
@@ -139,6 +141,8 @@ def main():
     else:
         print("Not using pretrained model. The Model is same as SASRec")
 
+    wandb.init(project = 'Movie_Rec_Train', entity = 'recsys_lvl2', config = args, name = args.model_name + '-' + args.data_name + '-' + '')
+    
     early_stopping = EarlyStopping(args.checkpoint_path, patience=10, verbose=True)
     for epoch in range(args.epochs):
         trainer.train(epoch)

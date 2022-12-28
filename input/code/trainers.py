@@ -6,6 +6,7 @@ from torch.optim import Adam
 
 from utils import ndcg_k, recall_at_k
 
+import wandb
 
 class Trainer:
     def __init__(
@@ -198,6 +199,9 @@ class PretrainTrainer(Trainer):
             "map_loss_avg": map_loss_avg / num,
             "sp_loss_avg": sp_loss_avg / num,
         }
+        
+        wandb.log(losses)
+        
         print(desc)
         print(str(losses))
         return losses
@@ -257,6 +261,8 @@ class FinetuneTrainer(Trainer):
                 "rec_cur_loss": "{:.4f}".format(rec_cur_loss),
             }
 
+            wandb.log(post_fix)
+            
             if (epoch + 1) % self.args.log_freq == 0:
                 print(str(post_fix))
 

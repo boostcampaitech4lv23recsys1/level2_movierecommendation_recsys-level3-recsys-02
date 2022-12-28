@@ -5,6 +5,9 @@ from modules import Encoder, LayerNorm
 
 
 class S3RecModel(nn.Module):
+    '''
+    https://github.com/RUCAIBox/CIKM2020-S3Rec
+    '''
     def __init__(self, args):
         super(S3RecModel, self).__init__()
         self.item_embeddings = nn.Embedding(

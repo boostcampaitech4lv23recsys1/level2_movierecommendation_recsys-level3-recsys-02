@@ -1,2 +1,4 @@
-*.ipynb
 *cache*
+.DS_Store
+*.pt
+*.ipynb
