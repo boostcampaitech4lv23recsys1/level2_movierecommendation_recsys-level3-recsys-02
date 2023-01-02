@@ -233,6 +233,69 @@ def main():
         return merge.groupby('item')['attributes'].apply(lambda x:list(x)[0]).to_json(
             "data/ML_item2attributes_all.json"
         )
+
+    # preprocessing_ohj.함수명으로 함수 호출 가능
+    class preprocessing_ohj:
+        # timestamp -> year, month, daty, hour, minute, second로 나누기
+        def split_time(train_df):
+            import time
+            datetime_df = train_df['time'].apply(lambda x: time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(x)))
+            datetime_df = datetime_df.str.split(" ", expand=True)
+
+            datetime_df.columns = ['date', 'time']
+
+            date_df = datetime_df['date'].str.split("-", expand=True)
+            date_df.columns = ['year', 'month', 'day'] 
+
+            time_df = datetime_df['time'].str.split(":", expand=True)
+            time_df.columns = ['hour', 'minute', 'second'] 
+
+            datetime_df = pd.concat([datetime_df, date_df], axis=1)
+            datetime_df = pd.concat([datetime_df, time_df], axis=1)
+
+            print(list(datetime_df))
+            train_df = pd.concat([train_df, datetime_df], axis=1)
+
+            return train_df
+
+        # 모든 아이템 feature 합치기 
+        def create_item_df(data_path):
+            import os
+
+            year_data = pd.read_csv(os.path.join(data_path, 'years.tsv'), sep='\t')
+            writer_data = pd.read_csv(os.path.join(data_path, 'writers.tsv'), sep='\t')
+            title_data = pd.read_csv(os.path.join(data_path, 'titles.tsv'), sep='\t')
+            genre_data = pd.read_csv(os.path.join(data_path, 'genres.tsv'), sep='\t')
+            director_data = pd.read_csv(os.path.join(data_path, 'directors.tsv'), sep='\t')
+
+            item_df = pd.merge(year_data, writer_data, on='item', how='outer')
+            item_df = pd.merge(item_df, title_data, on='item', how='outer')
+            item_df = pd.merge(item_df, genre_data, on='item', how='outer')
+            item_df = pd.merge(item_df, director_data, on='item', how='outer')
+
+            print(list(item_df))
+
+            return item_df
+
+        # data type 수정하기
+        def refactor_data_type(year_data, writer_data, director_data):
+            year_data['year'] = year_data['year'].astype(int)
+            writer_data['writer'] = writer_data['writer'].str[2:]
+            director_data['director'] = director_data['director'].str[2:]
+            
+            return year_data, writer_data, director_data
+
+        # title에 (연도) 제거, ',The' 제거
+        def simplify_title(title_data):
+            import re
+
+            # 괄호와 괄호 내 문자열 제거
+            title_data['title'] = title_data['title'].str.replace(pat = r'\(.*\)|\s-\s.*', repl=r'', regex=True)
+            title_data['title'] = title_data['title'].str.replace(pat = r'\, The|\s-\s.*', repl=r'', regex=True)
+            title_data['title'] = title_data['title'].str.strip()
+
+            return title_data
+
     
     
 if __name__ == "__main__":
