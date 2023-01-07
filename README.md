@@ -8,6 +8,11 @@
 &nbsp;
 
 ###  최종 결과
+public
+<img width="1087" alt="스크린샷 2023-01-07 오후 2 31 42" src="https://user-images.githubusercontent.com/79159191/211132827-ae3a7934-17d3-421a-b0be-b7670149c233.png">
+
+private
+<img width="1085" alt="스크린샷 2023-01-07 오후 2 32 00" src="https://user-images.githubusercontent.com/79159191/211132830-494dffaa-479b-4a1f-89cd-3e2c5661dcaf.png">
 
 
 &nbsp;
