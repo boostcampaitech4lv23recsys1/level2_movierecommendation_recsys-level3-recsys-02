@@ -9,10 +9,11 @@
 
 ###  최종 결과
 public
-<img width="1087" alt="스크린샷 2023-01-07 오후 2 31 42" src="https://user-images.githubusercontent.com/79159191/211132827-ae3a7934-17d3-421a-b0be-b7670149c233.png">
+<img width="1085" alt="스크린샷 2023-01-07 오후 2 34 32" src="https://user-images.githubusercontent.com/79159191/211132944-706c1cc7-3409-43d7-9664-85af05d06c58.png">
 
 private
-<img width="1085" alt="스크린샷 2023-01-07 오후 2 32 00" src="https://user-images.githubusercontent.com/79159191/211132830-494dffaa-479b-4a1f-89cd-3e2c5661dcaf.png">
+<img width="1085" alt="스크린샷 2023-01-07 오후 2 34 54" src="https://user-images.githubusercontent.com/79159191/211132945-aac53710-1835-4620-86da-4f5ece75d6d8.png">
+
 
 
 &nbsp;
