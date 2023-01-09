@@ -3,15 +3,15 @@
 
 > **목차**
 > 
-> [팀원 소개](https://github.com/boostcampaitech4lv23recsys1/level2_movierecommendation_recsys-level3-recsys-02/edit/main/README.md#%EF%B8%8F%EF%B8%8F--%ED%8C%80%EC%9B%90-%EC%86%8C%EA%B0%9C)
+> [팀원 소개](https://github.com/boostcampaitech4lv23recsys1/level2_movierecommendation_recsys-level3-recsys-02/blob/main/README.md#%EF%B8%8F%EF%B8%8F--%ED%8C%80%EC%9B%90-%EC%86%8C%EA%B0%9C)
 > 
-> [최종 결과](https://github.com/boostcampaitech4lv23recsys1/level2_movierecommendation_recsys-level3-recsys-02/edit/main/README.md#%EC%B5%9C%EC%A2%85-%EA%B2%B0%EA%B3%BC) 
+> [최종 결과](https://github.com/boostcampaitech4lv23recsys1/level2_movierecommendation_recsys-level3-recsys-02/blob/main/README.md#%EC%B5%9C%EC%A2%85-%EA%B2%B0%EA%B3%BC) 
 > 
-> [프로젝트 개요](https://github.com/boostcampaitech4lv23recsys1/level2_movierecommendation_recsys-level3-recsys-02/edit/main/README.md#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B0%9C%EC%9A%94) 
+> [프로젝트 개요](https://github.com/boostcampaitech4lv23recsys1/level2_movierecommendation_recsys-level3-recsys-02/blob/main/README.md#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B0%9C%EC%9A%94) 
 > 
-> [프로젝트 구조](https://github.com/boostcampaitech4lv23recsys1/level2_movierecommendation_recsys-level3-recsys-02/edit/main/README.md#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B5%AC%EC%A1%B0) 
+> [프로젝트 구조](https://github.com/boostcampaitech4lv23recsys1/level2_movierecommendation_recsys-level3-recsys-02/blob/main/README.md#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B5%AC%EC%A1%B0) 
 > 
-> [설치 및 시작](https://github.com/boostcampaitech4lv23recsys1/level2_movierecommendation_recsys-level3-recsys-02/edit/main/README.md#%EC%84%A4%EC%B9%98-%EB%B0%8F-%EC%8B%9C%EC%9E%91) 
+> [설치 및 시작](https://github.com/boostcampaitech4lv23recsys1/level2_movierecommendation_recsys-level3-recsys-02/blob/main/README.md#%EC%84%A4%EC%B9%98-%EB%B0%8F-%EC%8B%9C%EC%9E%91) 
 >
 
 ## 2️⃣ RecSys_2조 2️⃣
